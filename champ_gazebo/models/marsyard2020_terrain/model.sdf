@@ -9,7 +9,7 @@
       <collision name="collision">
         <geometry>
           <mesh>
-            <uri>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/marsyard2020_terrain/meshes/terrain_compressed.obj</uri>
+            <uri>model://marsyard2020_terrain/meshes/terrain_compressed.obj</uri>
           </mesh>
         </geometry>
       </collision>
@@ -17,7 +17,7 @@
       <visual name="visual">	
         <geometry>
           <mesh>
-            <uri>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/marsyard2020_terrain/meshes/terrain_compressed.obj</uri>
+            <uri>model://marsyard2020_terrain/meshes/terrain_compressed.obj</uri>
           </mesh>
         </geometry>
       </visual>

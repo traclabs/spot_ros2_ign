@@ -26,9 +26,28 @@
     <model name="spot sdf">
       <pose>0 0 0.7 0 0 0</pose>
       <include>
-        <uri>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/models/spot</uri>
+        <uri>model://spot</uri>
       </include>
     </model> -->
+
+ <!-- Plugins to simulate physics, render scene, and a few others -->
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
 
   </world>
 </sdf>

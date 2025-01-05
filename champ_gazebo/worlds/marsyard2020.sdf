@@ -42,7 +42,7 @@
 
     <model name="marsyard">
       <include>
-        <uri>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/marsyard2020_terrain</uri>
+        <uri>model://marsyard2020_terrain</uri>
       </include>
     </model>
 

@@ -31,6 +31,8 @@ set(dependencies
   gazebo_msgs
   gazebo_ros)
 
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/${PROJECT_NAME}.dsv.in")
+
 install(
   DIRECTORY worlds models
   DESTINATION share/${PROJECT_NAME})

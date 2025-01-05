@@ -26,6 +26,7 @@ from launch.substitutions import PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 import os
+import xacro
 
 # This will only take in effect if you are running in Simulation
 os.environ['GAZEBO_MODEL_PATH'] = os.path.join(get_package_share_directory('champ_gazebo'),
@@ -111,13 +112,18 @@ def generate_launch_description():
 
     print(xacro_full_dir)
 
+    robot_description = xacro.process_file( 
+       xacro_full_dir,
+       mappings={"simulate_cameras": "True",
+                 "visualize": "False"}).toprettyxml(indent="  ")
+
     declare_robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
         output='screen',
         parameters=[{"use_sim_time": use_sim_time},
-                    {'robot_description': Command(['xacro ', xacro_full_dir])}],
+                    {'robot_description': robot_description}],
         remappings=[('/tf', 'tf'),
                     ('/tf_static', 'tf_static')])
 
@@ -208,7 +214,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(
                 [os.path.join(get_package_share_directory('ros_ign_gazebo'),
                               'launch', 'ign_gazebo.launch.py')]),
-            launch_arguments=[('gz_args', [' -r -v 4 ', ground_plane_path])]),
+            launch_arguments=[('gz_args', [' -r -v 4 ', marsyard_path])]),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=declare_spawn_entity_to_gazebo_node,
