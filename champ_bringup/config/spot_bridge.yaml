@@ -1,0 +1,35 @@
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "ignition.msgs.Clock" 
+#  lazy: true # default: false :o
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/frontleft_fisheye"
+  gz_topic_name: "/frontleft_fisheye"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image" 
+#  lazy: true
+  direction: GZ_TO_ROS
+  
+- ros_topic_name: "/frontright_fisheye"
+  gz_topic_name: "/frontright_fisheye"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image" 
+#  lazy: true
+  direction: GZ_TO_ROS
+  
+  
+- ros_topic_name: "/frontleft_depth/points"
+  gz_topic_name: "/frontleft_depth/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "ignition.msgs.PointCloudPacked" 
+#  lazy: true
+  direction: GZ_TO_ROS  
+  
+- ros_topic_name: "/frontright_depth/points"
+  gz_topic_name: "/frontright_depth/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "ignition.msgs.PointCloudPacked" 
+#  lazy: true
+  direction: GZ_TO_ROS

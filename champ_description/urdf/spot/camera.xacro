@@ -18,6 +18,7 @@
                 <sensor name="${name}_fisheye_image" type="camera">
                     <pose>0 0.01 0 0 0 0</pose>
                     <update_rate>30</update_rate>
+                    <topic>${name}_fisheye</topic>
                     <visualize>${visualize}</visualize>
                     <camera>
                         <horizontal_fov>${radians(102.35)}</horizontal_fov> <!-- computed from real fx -->
@@ -45,23 +46,24 @@
                             </intrinsics>
                         </lens>
                     </camera>
-                    <plugin filename="libmono_camera_system.so" name="subt::MonoCameraSystem" >
-                     <!-- added by diya 8/30 
+                    <!--<plugin filename="libmono_camera_system.so" name="subt::MonoCameraSystem" >
                         <camera>
                             <image_topic>camera/image_raw</image_topic>
                             <camera_info_topic>camera/camera_info</camera_info_topic>
                             <frame_name>camera_frame</frame_name>
                             <update_rate>30.0</update_rate>
-                        </camera>  -->
-                    </plugin>
+                        </camera>
+                    </plugin>-->
                 </sensor>
 
                 <sensor name="${name}_depth" type="depth_camera">
                     <pose>0 0 0 0 0 0</pose>
-                    <update_rate>30</update_rate>
+                    <update_rate>10</update_rate>
                     <visualize>${visualize}</visualize>
+                    <topic>${name}_depth</topic>
                     <camera>
                         <horizontal_fov>${radians(102.35)}</horizontal_fov> <!-- put here equal to mono cam -->
+                        <optical_frame_id>${prefix}camera_${name}</optical_frame_id>
                         <image>
                             <width>424</width>
                             <height>240</height>
@@ -71,20 +73,20 @@
                             <near>0.1</near>
                             <far>4.0</far>
                         </clip>
-                        <noise>
+                        <!--<noise>
                             <type>gaussian</type>
                             <mean>0.0</mean>
                             <stddev>0.007</stddev>
-                        </noise>
-                        <lens>
+                        </noise>-->
+                        <!--<lens>
                             <intrinsics>
-                                <fx>170.6</fx> <!-- computed from FOV -->
-                                <fy>170.6</fy> <!-- computed from FOV -->
-                                <cx>211.5</cx> <!-- ideal value -->
-                                <cy>119.5</cy> <!-- ideal value -->
+                                <fx>170.6</fx> <!** computed from FOV **>
+                                <fy>170.6</fy> <!** computed from FOV **>
+                                <cx>211.5</cx> <!** ideal value **>
+                                <cy>119.5</cy> <!** ideal value **>
                                 <s>0</s>
                             </intrinsics>
-                        </lens>
+                        </lens>-->
                     </camera>
                 </sensor>
             </gazebo>

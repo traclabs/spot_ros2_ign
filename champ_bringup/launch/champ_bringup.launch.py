@@ -58,7 +58,7 @@ def generate_launch_description():
         description='If true, use simulated clock')
     declare_use_rviz = DeclareLaunchArgument(
         'use_rviz',
-        default_value='True',
+        default_value='False',
         description='whether or not to launch rviz')
     declare_tf_prefix = DeclareLaunchArgument(
         'tf_prefix',
@@ -84,9 +84,10 @@ def generate_launch_description():
         # namespace='',
         arguments=['--ros-args', '--log-level', 'INFO'],
         # prefix=['xterm -e gdb -ex run --args'],
+        
         parameters=[
-            # {"use_sim_time": use_sim_time},
-                    champ_params],
+            {"use_sim_time": use_sim_time},
+            champ_params],
         remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
         )
 
@@ -98,8 +99,8 @@ def generate_launch_description():
         output='screen',
         # namespace='',
         parameters=[
-            # {"use_sim_time": use_sim_time},
-                    champ_params],
+            {"use_sim_time": use_sim_time},
+            champ_params],
         remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
         #prefix=['xterm -e gdb -ex run --args'],
     )
@@ -166,14 +167,14 @@ def generate_launch_description():
                                  executable='ekf_node',
                                  name='base_to_footprint_ekf',
                                  output='screen',
-                                 parameters=[localization_params],
+                                 parameters=[localization_params, {"use_sim_time" : True}],
                                  remappings=[('odometry/filtered', 'odometry/local')])
 
     footprint_to_odom_ekf = Node(package='robot_localization',
                                  executable='ekf_node',
                                  name='footprint_to_odom_ekf',
                                  output='screen',
-                                 parameters=[localization_params],
+                                 parameters=[localization_params, {"use_sim_time" : True}],
                                  remappings=[('odometry/filtered', 'odom')])
 
     load_joint_state_controller = ExecuteProcess(
@@ -188,22 +189,55 @@ def generate_launch_description():
         output='screen'
     )
 
-    # added by diya 9/4
+    #bridge = Node(
+    #    package='ros_gz_bridge',
+    #    executable='parameter_bridge',
+    #    arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+    #    output='screen'
+    #)
+
+    bridge_config_file = os.path.join(
+        champ_bringup_share_dir, 'config', "spot_bridge.yaml")
+
+
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        parameters=[{'config_file': bridge_config_file}],
+        #arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
         output='screen'
     )
 
-    joint_state_publisher_gui = Node(
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui',
-        output='screen',
-        parameters=[{'use_sim_time': True}]
+
+    #joint_state_publisher_gui = Node(
+    #    package='joint_state_publisher_gui',
+    #    executable='joint_state_publisher_gui',
+    #    name='joint_state_publisher_gui',
+    #    output='screen',
+    #    parameters=[{'use_sim_time': True}]
+    #)
+
+    # Running tf_broadcaster
+    broadcast_left_front_cam = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        #parameters=[{'config_file': bridge_config_file}],
+        arguments=["--x", "0", "--y", "0", "--z", "0",
+        "--roll", "0", "--pitch", "0", "--yaw", "0",
+        "--frame-id", "camera_frontleft", "--child-frame-id", "spot/camera_frontleft/frontleft_depth"],
+        output='screen'
     )
 
+    broadcast_right_front_cam = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        #parameters=[{'config_file': bridge_config_file}],
+        arguments=["--x", "0", "--y", "0", "--z", "0",
+        "--roll", "0", "--pitch", "0", "--yaw", "0",
+        "--frame-id", "camera_frontright", "--child-frame-id", "spot/camera_frontright/frontright_depth"],
+        output='screen'
+    )
+    
 
     ground_plane_path=os.path.join(get_package_share_directory('champ_gazebo'), 'worlds', 'ground_plane.sdf')
     marsyard_path=os.path.join(get_package_share_directory('champ_gazebo'), 'worlds', 'marsyard2020.sdf')
@@ -241,5 +275,7 @@ def generate_launch_description():
         footprint_to_odom_ekf,
         base_to_footprint_ekf,
         declare_use_sim_time,
-        joint_state_publisher_gui  # added by diya 9/6
+        broadcast_left_front_cam,
+        broadcast_right_front_cam
+        #joint_state_publisher_gui  # added by diya 9/6
     ])
