@@ -11,10 +11,10 @@ find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(gazebo REQUIRED)
-find_package(gazebo_dev REQUIRED)
-find_package(gazebo_msgs REQUIRED)
-find_package(gazebo_ros REQUIRED)
+#find_package(gazebo REQUIRED)
+#find_package(gazebo_dev REQUIRED)
+#find_package(gazebo_msgs REQUIRED)
+#find_package(gazebo_ros REQUIRED)
 
 include_directories(
   include
@@ -26,10 +26,11 @@ set(dependencies
   std_srvs
   tf2_ros
   geometry_msgs
-  gazebo
-  gazebo_dev
-  gazebo_msgs
-  gazebo_ros)
+#  gazebo
+#  gazebo_dev
+#  gazebo_msgs
+#  gazebo_ros
+)
 
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/${PROJECT_NAME}.dsv.in")
 

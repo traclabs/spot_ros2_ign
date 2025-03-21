@@ -15,8 +15,7 @@
   <depend>std_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>geometry_msgs</depend>
-  <depend>gazebo</depend>
-  <depend>gazebo_dev</depend>
+  <depend>ros_gz_sim</depend>
   <depend>gazebo_msgs</depend>
   <depend>gazebo_ros</depend>
   <depend>gazebo_plugins</depend>

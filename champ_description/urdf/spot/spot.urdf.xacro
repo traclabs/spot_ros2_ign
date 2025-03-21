@@ -155,9 +155,9 @@
     <xacro:fixed_joint name="camera_back_j" parent="$(arg prefix)base_link" child="$(arg prefix)camera_back" xyz="-0.425 0 0.01" rpy="0 0.3 ${-pi}" />
     
     
-    <ros2_control name="IgnitionSystem" type="system">
+    <ros2_control name="GazeboSystem" type="system">
         <hardware>
-            <plugin>ign_ros2_control/IgnitionSystem</plugin> 
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin> 
         </hardware>
             <!--Front left joints-->
         <joint name="front_left_hip_x">
@@ -274,7 +274,7 @@
     </ros2_control>
 
    <gazebo>
-        <plugin name="ign_ros2_control::IgnitionROS2ControlPlugin" filename="ign_ros2_control-system">
+        <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="gz_ros2_control-system">
             <parameters>$(find champ_bringup)/config/ros2_control_spot.yaml</parameters>
         </plugin>
     </gazebo>
