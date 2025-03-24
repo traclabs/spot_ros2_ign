@@ -93,11 +93,12 @@ def generate_launch_description():
   # Start Gazebo
   ground_plane_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ground_plane.sdf'])
   marsyard_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'marsyard2020.sdf'])
+  warehouse_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ionic.sdf'])
   gz_launch = IncludeLaunchDescription(
             PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py']),
             launch_arguments = [
                ('gz_args', [
-                   marsyard_sdf,
+                   warehouse_sdf,
                    ' -r',
                    ' -v 4' 
                ])
@@ -170,6 +171,14 @@ def generate_launch_description():
         output='screen',
   )
 
+  load_arm_trajectory_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["arm_trajectory_controller", "-c", "/controller_manager"],
+        name="start_arm_trajectory_controller",
+        output='screen',
+  )
+
     
   return LaunchDescription(
     launch_args + 
@@ -189,7 +198,7 @@ def generate_launch_description():
       RegisterEventHandler(
           event_handler=OnProcessExit(
               target_action=load_joint_state_controller,
-              on_exit=[load_joint_trajectory_controller],
+              on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller],
           )
       ),
       #declare_quadruped_controller_node,
