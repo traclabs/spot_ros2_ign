@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="urban_circuit_02">
+  
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    
+    <scene>
+      <ambient>0.1 0.1 0.1 1.0</ambient>
+      <background>0 0 0 1.0</background>
+      <grid>false</grid>
+      <origin_visual>false</origin_visual>
+    </scene>    
+    
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    
+    <!-- The staging area -->    
+    <include>
+        <name>staging_area</name>
+        <pose>0 0 0 0 0 0</pose>
+        <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Urban Starting Area</uri>
+    </include>
+    
+    <!-- The base station -->
+    <include>
+      <static>true</static>
+      <name>base_station</name>
+      <pose>1 27 7.5 0 0 -1.5708</pose>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Base Station</uri>
+    </include>    
+        
+    
+    <include>
+      <name>tile_11</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Urban Service Room Centered</uri>
+      <pose>-96.050000 -56.000000 10.920000 0 0 0.000000</pose>
+    </include>    
+    
+    <include>
+      <name>tile_12</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Urban Service Room Straight Lights</uri>
+      <pose>-56.050000 -56.000000 0.920000 0 0 1.570796</pose>
+    </include>    
+    
+<!--    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+      </link>
+    </model>-->
+    
+    
+  </world>
+</sdf>

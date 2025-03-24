@@ -35,7 +35,7 @@ set(dependencies
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/${PROJECT_NAME}.dsv.in")
 
 install(
-  DIRECTORY worlds models
+  DIRECTORY worlds models launch
   DESTINATION share/${PROJECT_NAME})
   
 ament_package()

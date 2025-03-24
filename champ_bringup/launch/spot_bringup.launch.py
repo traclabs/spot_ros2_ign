@@ -39,6 +39,22 @@ def generate_launch_description():
 
   launch_args = [
     DeclareLaunchArgument(
+        'x',
+        default_value='5.0',
+        description='X at which to spawn Spot. 0.84 for ground plane, 0 for marsyard is good'),
+    DeclareLaunchArgument(
+        'y',
+        default_value='0.0',
+        description='y at which to spawn Spot.'), 
+    DeclareLaunchArgument(
+        'z',
+        default_value='0.84',
+        description='Height at which to spawn Spot.'), 
+    DeclareLaunchArgument(
+        'yaw',
+        default_value='-0.5',
+        description='Yaw at which to spawn Spot.'),          
+    DeclareLaunchArgument(
         'use_simulator',
         default_value='True',
         description='whether to use Gazebo Simulation.'),
@@ -92,13 +108,12 @@ def generate_launch_description():
 
   # Start Gazebo
   ground_plane_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ground_plane.sdf'])
-  marsyard_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'marsyard2020.sdf'])
-  warehouse_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ionic.sdf'])
+  plant_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'industrial_plant.sdf'])
   gz_launch = IncludeLaunchDescription(
             PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py']),
             launch_arguments = [
                ('gz_args', [
-                   warehouse_sdf,
+                   plant_sdf,
                    ' -r',
                    ' -v 4' 
                ])
@@ -123,7 +138,7 @@ def generate_launch_description():
   #xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
   spot_description_share_dir = get_package_share_directory('spot_description')
   xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
-  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo'}
+  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True'}
 
   print(xacro_full_dir)
 
@@ -148,7 +163,12 @@ def generate_launch_description():
         package='ros_gz_sim',
         executable='create',
         arguments=['-name', 'spot',
-                   '-topic', '/robot_description', "-z", "0.0"], # 0.84
+                   '-topic', '/robot_description',
+                    "-x", LaunchConfiguration("x"),
+                    "-y", LaunchConfiguration("y"),                     
+                   "-z", LaunchConfiguration("z"),
+                   "-Y", LaunchConfiguration("yaw"),
+                  ],
         parameters=[{"use_sim_time": use_sim_time}],
         output='screen',
         condition=IfCondition(use_simulator)        
@@ -178,6 +198,20 @@ def generate_launch_description():
         name="start_arm_trajectory_controller",
         output='screen',
   )
+  
+  quadruped_controller_node = Node(
+        package='champ_base',
+        executable='quadruped_controller',
+        # name='quadruped_controller',
+        output='screen',
+        # namespace='',
+        arguments=['--ros-args', '--log-level', 'INFO'],
+        # prefix=['xterm -e gdb -ex run --args'],
+        parameters=[
+            # {"use_sim_time": use_sim_time},
+                    champ_params],
+        remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
+        )  
 
     
   return LaunchDescription(
@@ -201,7 +235,7 @@ def generate_launch_description():
               on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller],
           )
       ),
-      #declare_quadruped_controller_node,
+      #quadruped_controller_node,
       #declare_state_estimation_node,
       #declare_rviz_launch_include,
       #declare_localization_params,
