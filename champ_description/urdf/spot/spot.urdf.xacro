@@ -278,6 +278,15 @@
             <parameters>$(find champ_bringup)/config/ros2_control_spot.yaml</parameters>
         </plugin>
     </gazebo>
+    
+  <gazebo>
+      <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+          <odom_frame>odom</odom_frame>
+          <robot_base_frame>$(arg prefix)base_link</robot_base_frame>
+          <odom_publish_frequency>10</odom_publish_frequency>
+          <tf_topic>spot/pose</tf_topic>
+      </plugin>
+  </gazebo>    
 
 </robot>
 

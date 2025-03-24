@@ -109,6 +109,7 @@ def generate_launch_description():
   # Start Gazebo
   ground_plane_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ground_plane.sdf'])
   plant_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'industrial_plant.sdf'])
+  marsyard_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'marsyard2020.sdf'])
   gz_launch = IncludeLaunchDescription(
             PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py']),
             launch_arguments = [
@@ -213,6 +214,19 @@ def generate_launch_description():
         remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
         )  
 
+  quadruped_controller_node = Node(
+        package='champ_base',
+        executable='quadruped_controller',
+        # name='quadruped_controller',
+        output='screen',
+        # namespace='',
+        arguments=['--ros-args', '--log-level', 'INFO'],
+        # prefix=['xterm -e gdb -ex run --args'],
+        parameters=[
+            # {"use_sim_time": use_sim_time},
+                    champ_params],
+        remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
+        )
     
   return LaunchDescription(
     launch_args + 
