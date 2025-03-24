@@ -93,12 +93,11 @@ def generate_launch_description():
   # Start Gazebo
   ground_plane_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ground_plane.sdf'])
   marsyard_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'marsyard2020.sdf'])
-  warehouse_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ionic.sdf'])
   gz_launch = IncludeLaunchDescription(
             PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py']),
             launch_arguments = [
                ('gz_args', [
-                   warehouse_sdf,
+                   marsyard_sdf,
                    ' -r',
                    ' -v 4' 
                ])
@@ -119,11 +118,11 @@ def generate_launch_description():
   )
 
   # Robot spawn/publisher
-  #xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
-  #xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
-  spot_description_share_dir = get_package_share_directory('spot_description')
-  xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
-  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo'}
+  xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
+  xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
+  #spot_description_share_dir = get_package_share_directory('spot_description')
+  #xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
+  #xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo'}
 
   print(xacro_full_dir)
 
@@ -179,6 +178,19 @@ def generate_launch_description():
         output='screen',
   )
 
+  quadruped_controller_node = Node(
+        package='champ_base',
+        executable='quadruped_controller',
+        # name='quadruped_controller',
+        output='screen',
+        # namespace='',
+        arguments=['--ros-args', '--log-level', 'INFO'],
+        # prefix=['xterm -e gdb -ex run --args'],
+        parameters=[
+            # {"use_sim_time": use_sim_time},
+                    champ_params],
+        remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
+        )
     
   return LaunchDescription(
     launch_args + 
@@ -201,7 +213,7 @@ def generate_launch_description():
               on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller],
           )
       ),
-      #declare_quadruped_controller_node,
+      #quadruped_controller_node,
       #declare_state_estimation_node,
       #declare_rviz_launch_include,
       #declare_localization_params,
