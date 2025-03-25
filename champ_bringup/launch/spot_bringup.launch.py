@@ -51,6 +51,10 @@ def generate_launch_description():
         default_value='0.84',
         description='Height at which to spawn Spot.'), 
     DeclareLaunchArgument(
+        'roll',
+        default_value='3.1416',
+        description='Roll at which to spawn Spot.'),  
+    DeclareLaunchArgument(
         'yaw',
         default_value='-0.5',
         description='Yaw at which to spawn Spot.'),          
@@ -135,11 +139,11 @@ def generate_launch_description():
   )
 
   # Robot spawn/publisher
-  #xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
-  #xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
-  spot_description_share_dir = get_package_share_directory('spot_description')
-  xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
-  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True'}
+  xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
+  xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
+  #spot_description_share_dir = get_package_share_directory('spot_description')
+  #xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
+  #xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True'}
 
   print(xacro_full_dir)
 
@@ -168,6 +172,7 @@ def generate_launch_description():
                     "-x", LaunchConfiguration("x"),
                     "-y", LaunchConfiguration("y"),                     
                    "-z", LaunchConfiguration("z"),
+                   "-R", LaunchConfiguration("roll"),
                    "-Y", LaunchConfiguration("yaw"),
                   ],
         parameters=[{"use_sim_time": use_sim_time}],
@@ -199,20 +204,12 @@ def generate_launch_description():
         name="start_arm_trajectory_controller",
         output='screen',
   )
-  
-  quadruped_controller_node = Node(
-        package='champ_base',
-        executable='quadruped_controller',
-        # name='quadruped_controller',
+
+  odom_republish_node = Node(
+        package='champ_gazebo',
+        executable='helper_publish_base_pose',
         output='screen',
-        # namespace='',
-        arguments=['--ros-args', '--log-level', 'INFO'],
-        # prefix=['xterm -e gdb -ex run --args'],
-        parameters=[
-            # {"use_sim_time": use_sim_time},
-                    champ_params],
-        remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
-        )  
+  )
 
   quadruped_controller_node = Node(
         package='champ_base',
@@ -249,6 +246,7 @@ def generate_launch_description():
               on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller],
           )
       ),
+      odom_republish_node,
       #quadruped_controller_node,
       #declare_state_estimation_node,
       #declare_rviz_launch_include,

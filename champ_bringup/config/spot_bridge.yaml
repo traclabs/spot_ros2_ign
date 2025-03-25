@@ -34,9 +34,9 @@
 #  lazy: true
   direction: GZ_TO_ROS
   
-- ros_topic_name: "/body_pose"
+- ros_topic_name: "/body_pose_array"
   gz_topic_name: "/spot/pose"
-  ros_type_name: "sensor_msgs/msg/Pose"
-  gz_type_name: "gz.msgs.Pose" 
+  ros_type_name: "geometry_msgs/msg/PoseArray"
+  gz_type_name: "gz.msgs.Pose_V" 
 #  lazy: true
   direction: GZ_TO_ROS

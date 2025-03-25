@@ -32,7 +32,15 @@ set(dependencies
 #  gazebo_ros
 )
 
+add_executable(helper_publish_base_pose src/helper_publish_base_pose.cpp)
+ament_target_dependencies(helper_publish_base_pose ${dependencies})
+
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/${PROJECT_NAME}.dsv.in")
+
+install(TARGETS 
+  helper_publish_base_pose
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 install(
   DIRECTORY worlds models launch
