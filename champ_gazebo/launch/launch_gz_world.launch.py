@@ -88,7 +88,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py']),
             launch_arguments = [
                ('gz_args', [
-                   industrial_plant_sdf,
+                   subt_urban_circuit_02_sdf,
                    ' -r',
                    ' -v 4' 
                ])

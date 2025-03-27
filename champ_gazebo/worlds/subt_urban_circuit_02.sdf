@@ -2,13 +2,15 @@
 <sdf version="1.8">
   <world name="urban_circuit_02">
   
+    <!-- Adapted from here: https://github.com/osrf/subt/blob/master/subt_ign/worlds/urban_circuit/02/urban_circuit_02.sdf -->
     <physics name="1ms" type="ignored">
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1.0</real_time_factor>
     </physics>
     
+    <!-- Changing it to make it brighter -->
     <scene>
-      <ambient>0.1 0.1 0.1 1.0</ambient>
+      <ambient>0.9 0.9 0.9 1.0</ambient>
       <background>0 0 0 1.0</background>
       <grid>false</grid>
       <origin_visual>false</origin_visual>
@@ -58,7 +60,98 @@
       <pose>1 27 7.5 0 0 -1.5708</pose>
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Base Station</uri>
     </include>    
-        
+     
+    <!-- Fiducial marking the origin for artifacts reports -->
+    <include>
+      <name>artifact_origin</name>
+      <pose>17.5 27 7.5 0 0 0</pose>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Fiducial</uri>
+    </include>     
+     
+    <include>
+      <name>tile_1</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Urban Large Room Split Lights</uri>
+      <pose>-16.050000 -16.000000 0.920000 0 0 3.141593</pose>
+    </include>
+
+    <include>
+      <name>tile_2</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Tunnel Tile Blocker</uri>
+      <pose>-39.050000 -16.000000 32.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>tile_3</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Tunnel Tile Blocker</uri>
+      <pose>6.950000 -16.000000 22.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>tile_4</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Urban 2 Story Lights</uri>
+      <pose>-16.050000 -16.000000 20.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>tile_5</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Urban Service Room Centered</uri>
+      <pose>-16.050000 -16.000000 30.920000 0 0 0.000000</pose>
+    </include>        
+    
+ <include>
+      <name>gas_1</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Gas</uri>
+      <pose>-16.050000 16.000000 30.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>backpack_1</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/JanSport Backpack Red</uri>
+      <pose>-9.050000 -12.000000 20.920000 0 0 -0.174533</pose>
+    </include>
+
+    <include>
+      <name>tile_6</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Urban 2 Story Lights</uri>
+      <pose>23.950000 -16.000000 0.920000 0 0 -1.570796</pose>
+    </include>
+
+    <include>
+      <name>tile_7</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Tunnel Tile Blocker</uri>
+      <pose>23.950000 7.000000 12.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>tile_8</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Urban Service Room Centered Lights</uri>
+      <pose>23.950000 -16.000000 10.920000 0 0 -1.570796</pose>
+    </include>
+
+    <include>
+      <name>rescue_randy_1</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Rescue Randy Sitting</uri>
+      <pose>23.950000 0.000000 10.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>gas_2</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Gas</uri>
+      <pose>55.950000 -16.000000 10.920000 0 0 -1.570796</pose>
+    </include>
+
+    <include>
+      <name>tile_9</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Urban 2 Story Lights</uri>
+      <pose>-96.050000 -56.000000 0.920000 0 0 0.000000</pose>
+    </include>
+
+    <include>
+      <name>tile_10</name>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Tunnel Tile Blocker</uri>
+      <pose>-119.050000 -56.000000 12.920000 0 0 0.000000</pose>
+    </include>    
+    
     
     <include>
       <name>tile_11</name>

@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
-    <model name="moon">
+    <model name="moon_surface">
       <static>true</static>
       <link name="link">
         <collision name="collision">
           <geometry>
             <heightmap>
-              <uri>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/moon/materials/heightmap/moon.png</uri>
+              <uri>model://moon_surface/materials/heightmap/moon.png</uri>
               <size>100 100 6</size>
               <pos>0 0 0</pos>
             </heightmap>
@@ -17,11 +17,11 @@
           <geometry>
             <heightmap>
               <texture>
-                <diffuse>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/moon/materials/textures/ground_1.jpg</diffuse>
-                <normal>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/moon/materials/textures/ground_normal.jpg</normal>
+                <diffuse>model://moon_surface/materials/textures/ground_1.jpg</diffuse>
+                <normal>model://moon_surface/materials/textures/ground_normal.jpg</normal>
                 <size>1</size>
               </texture>
-              <uri>file:///home/diya/spot_subt_ws/install/champ_gazebo/share/champ_gazebo/worlds/moon/materials/heightmap/moon.png</uri>
+              <uri>model://moon_surface/materials/heightmap/moon.png</uri>
               <size>100 100 6</size>
               <pos>0 0 0</pos>
             </heightmap>

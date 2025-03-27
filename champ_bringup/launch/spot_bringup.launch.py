@@ -52,7 +52,7 @@ def generate_launch_description():
         description='Height at which to spawn Spot.'), 
     DeclareLaunchArgument(
         'roll',
-        default_value='3.1416',
+        default_value='0.0',
         description='Roll at which to spawn Spot.'),  
     DeclareLaunchArgument(
         'yaw',
