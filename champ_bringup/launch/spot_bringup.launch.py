@@ -139,11 +139,11 @@ def generate_launch_description():
   )
 
   # Robot spawn/publisher
-  xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
-  xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
-  #spot_description_share_dir = get_package_share_directory('spot_description')
-  #xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
-  #xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True'}
+  #xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
+  #xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
+  spot_description_share_dir = get_package_share_directory('spot_description')
+  xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
+  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True', 'feet': 'True'}
 
   print(xacro_full_dir)
 

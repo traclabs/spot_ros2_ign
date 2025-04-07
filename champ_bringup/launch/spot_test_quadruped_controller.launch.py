@@ -50,7 +50,7 @@ def generate_launch_description():
     DeclareLaunchArgument(
         'champ_params',
         default_value=os.path.join(
-            champ_bringup_share_dir, 'config', 'champ_params.yaml'),
+            champ_bringup_share_dir, 'config', 'champ_params_spot_arm.yaml'),
         description='path to locks params.'),
     DeclareLaunchArgument(
         'localization_params',
@@ -63,7 +63,7 @@ def generate_launch_description():
   use_sim_time = LaunchConfiguration('use_sim_time', default=True)
   champ_params = LaunchConfiguration('champ_params')  
 
-
+  # ros2 topic pub /vox_nav/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
   quadruped_controller_node = Node(
         package='champ_base',
         executable='quadruped_controller',

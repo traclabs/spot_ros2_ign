@@ -37,7 +37,7 @@ joint_trajectory_controller:
       - velocity
 
     allow_partial_joints_goal: false # Defaults to false
-    open_loop_control: false
+    open_loop_control: true
     allow_integration_in_goal_trajectories: false
     constraints:
       stopped_velocity_tolerance: 0.1 # Defaults to 0.01

@@ -7,6 +7,7 @@ endif()
  
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -21,7 +22,8 @@ include_directories(
   ${GAZEBO_INCLUDE_DIRS}) 
 
 set(dependencies
-  rclcpp  
+  rclcpp
+  rclpy
   std_msgs
   std_srvs
   tf2_ros
@@ -40,6 +42,12 @@ ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/${PROJECT_NAME}.d
 install(TARGETS 
   helper_publish_base_pose
   RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  nodes/move_legs
+  nodes/move_arm
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
