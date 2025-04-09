@@ -248,13 +248,11 @@ void QuadrupedController::cmdPoseCallback(const geometry_msgs::msg::Pose::ConstS
   req_pose_.position.z = msg->position.z + gait_config_.nominal_height;
 
   RCLCPP_DEBUG(get_logger(), "Got go to pose command.. ");
-
 }
 
 void QuadrupedController::publishJoints(float target_joints[12])
 {
   if (publish_joint_control_) {
-    RCLCPP_INFO(get_logger(), "Got go to pose command: \n\t  %f %f %f \n\t %f %f %f \n\t %f %f %f \n\t %f %f %f \n ******", target_joints[0], target_joints[1], target_joints[2], target_joints[3], target_joints[4], target_joints[5], target_joints[6], target_joints[7], target_joints[8], target_joints[9], target_joints[10], target_joints[11]);
     trajectory_msgs::msg::JointTrajectory joints_cmd_msg;
     joints_cmd_msg.header.stamp = this->now();
     joints_cmd_msg.joint_names = joint_names_;

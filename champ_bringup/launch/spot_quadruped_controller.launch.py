@@ -44,10 +44,6 @@ def generate_launch_description():
         default_value='True',
         description='If true, use simulated clock'),
     DeclareLaunchArgument(
-        'use_rviz',
-        default_value='False',
-        description='whether or not to launch rviz'),
-    DeclareLaunchArgument(
         'champ_params',
         default_value=os.path.join(
             champ_bringup_share_dir, 'config', 'champ_params_spot_arm.yaml'),
@@ -73,14 +69,21 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', 'INFO'],
         # prefix=['xterm -e gdb -ex run --args'],
         parameters=[
-            # {"use_sim_time": use_sim_time},
-                    champ_params],
+            {"use_sim_time": use_sim_time},
+            champ_params],
         remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
         )
     
   return LaunchDescription(
     launch_args + 
     [
-      SetParameter(name='use_sim_time', value=True), 
       quadruped_controller_node,
+      #declare_state_estimation_node,
+      #declare_rviz_launch_include,
+      #declare_localization_params,
+      #footprint_to_odom_ekf,
+      #base_to_footprint_ekf,
+      #broadcast_left_front_cam,
+      #broadcast_right_front_cam
+      #joint_state_publisher_gui  # added by diya 9/6      
     ])

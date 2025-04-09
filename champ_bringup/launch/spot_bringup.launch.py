@@ -80,15 +80,9 @@ def generate_launch_description():
             champ_bringup_share_dir, 'rviz', 'default_view.rviz'),
         description='...'),
     DeclareLaunchArgument(
-        'champ_params',
-        default_value=os.path.join(
-            champ_bringup_share_dir, 'config', 'champ_params.yaml'),
-        description='path to locks params.'),
+      'spawn_spot', default_value='True'),
     DeclareLaunchArgument(
-        'localization_params',
-        default_value=os.path.join(
-            champ_bringup_share_dir, 'config', 'robot_localization_params.yaml'),
-        description='Path to the vox_nav parameters file.')
+      'start_quadruped_controller', default_value='True')
   ]
   
   use_simulator = LaunchConfiguration('use_simulator')
@@ -96,7 +90,6 @@ def generate_launch_description():
   use_rviz = LaunchConfiguration("use_rviz")
   tf_prefix = LaunchConfiguration('tf_prefix')
   rviz_config = LaunchConfiguration("rviz_config")
-  champ_params = LaunchConfiguration('champ_params')  
     
   # Gazebo setup
   champ_models_path = get_package_share_directory('champ_gazebo')
@@ -126,134 +119,24 @@ def generate_launch_description():
             condition=IfCondition(use_simulator)
   )
 
-  # Bridge
-  bridge_config_file = os.path.join(
-      champ_bringup_share_dir, 'config', "spot_bridge.yaml")
-
-  bridge = Node(
-      package='ros_gz_bridge',
-      executable='parameter_bridge',
-      parameters=[{'config_file': bridge_config_file}],
-      #arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-      output='screen'
+  # Spawn Spot
+  spawn_spot = IncludeLaunchDescription(
+            PathJoinSubstitution([FindPackageShare('champ_bringup'), 'launch', 'spot_spawn.launch.py']),
+            launch_arguments={'x': LaunchConfiguration("x"), 
+                      "y": LaunchConfiguration("y"),
+                      "z": LaunchConfiguration("z"),
+                      "roll": LaunchConfiguration("roll"),
+                      "yaw": LaunchConfiguration("yaw"),
+                      "start_quadruped_controller": LaunchConfiguration("start_quadruped_controller")                                            
+                     }.items(),
+            condition=IfCondition(LaunchConfiguration("spawn_spot"))
   )
-
-  # Robot spawn/publisher
-  #xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
-  #xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
-  spot_description_share_dir = get_package_share_directory('spot_description')
-  xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
-  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True', 'feet': 'True'}
-
-  print(xacro_full_dir)
-
-  robot_description = xacro.process_file( 
-     xacro_full_dir,
-     mappings=xacro_mappings).toprettyxml(indent="  ")
-
-  robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        parameters=[{"use_sim_time": use_sim_time},
-                    {'robot_description': robot_description}],
-        remappings=[('/tf', 'tf'),
-                    ('/tf_static', 'tf_static')],
-        output='screen'
-  )
-
-
-  # Spawn the robot in Ignition Gazebo
-  spawn_entity_to_gazebo_node = Node(
-        package='ros_gz_sim',
-        executable='create',
-        arguments=['-name', 'spot',
-                   '-topic', '/robot_description',
-                    "-x", LaunchConfiguration("x"),
-                    "-y", LaunchConfiguration("y"),                     
-                   "-z", LaunchConfiguration("z"),
-                   "-R", LaunchConfiguration("roll"),
-                   "-Y", LaunchConfiguration("yaw"),
-                  ],
-        parameters=[{"use_sim_time": use_sim_time}],
-        output='screen',
-        condition=IfCondition(use_simulator)        
-  )
-
-  load_joint_state_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-        name="start_joint_state_broadcaster",
-        output='screen'
-  )
-
-
-  load_joint_trajectory_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_trajectory_controller", "-c", "/controller_manager"],
-        name="start_joint_trajectory_controller",
-        output='screen',
-  )
-
-  load_arm_trajectory_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["arm_trajectory_controller", "-c", "/controller_manager"],
-        name="start_arm_trajectory_controller",
-        output='screen',
-  )
-
-  odom_republish_node = Node(
-        package='champ_gazebo',
-        executable='helper_publish_base_pose',
-        output='screen',
-  )
-
-  quadruped_controller_node = Node(
-        package='champ_base',
-        executable='quadruped_controller',
-        # name='quadruped_controller',
-        output='screen',
-        # namespace='',
-        arguments=['--ros-args', '--log-level', 'INFO'],
-        # prefix=['xterm -e gdb -ex run --args'],
-        parameters=[
-            # {"use_sim_time": use_sim_time},
-                    champ_params],
-        remappings=[('cmd_vel', 'vox_nav/cmd_vel')]
-        )
-    
+      
   return LaunchDescription(
     launch_args + 
     [
       SetParameter(name='use_sim_time', value=True), 
       env_gz_sim,
-      bridge,
       gz_launch,
-      robot_state_publisher_node,
-      spawn_entity_to_gazebo_node,      
-      RegisterEventHandler(
-          event_handler=OnProcessExit(
-              target_action=spawn_entity_to_gazebo_node,
-              on_exit=[load_joint_state_controller],
-          )
-      ),
-      RegisterEventHandler(
-          event_handler=OnProcessExit(
-              target_action=load_joint_state_controller,
-              on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller],
-          )
-      ),
-      odom_republish_node,
-      #quadruped_controller_node,
-      #declare_state_estimation_node,
-      #declare_rviz_launch_include,
-      #declare_localization_params,
-      #footprint_to_odom_ekf,
-      #base_to_footprint_ekf,
-      #broadcast_left_front_cam,
-      #broadcast_right_front_cam
-      #joint_state_publisher_gui  # added by diya 9/6
+      spawn_spot
     ])

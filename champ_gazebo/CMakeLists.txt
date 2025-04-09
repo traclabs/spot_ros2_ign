@@ -47,6 +47,8 @@ install(TARGETS
 install(PROGRAMS
   nodes/move_legs
   nodes/move_arm
+  nodes/spot_walk
+  nodes/republish_ground_truth
   DESTINATION lib/${PROJECT_NAME}
 )
 
