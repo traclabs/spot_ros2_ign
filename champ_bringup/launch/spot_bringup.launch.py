@@ -79,10 +79,17 @@ def generate_launch_description():
         default_value=os.path.join(
             champ_bringup_share_dir, 'rviz', 'default_view.rviz'),
         description='...'),
+    DeclareLaunchArgument('spawn_spot', default_value='True'),
+    DeclareLaunchArgument("urdf_file",
+        default_value=os.path.join( get_package_share_directory('spot_description'), 'urdf/spot.urdf.xacro')),
+    DeclareLaunchArgument("urdf_mapping",
+        default_value="{'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True', 'feet': 'True'}"),
+    DeclareLaunchArgument("robot_base_link", default_value="body"),         
+    DeclareLaunchArgument('start_quadruped_controller', default_value='True'),
     DeclareLaunchArgument(
-      'spawn_spot', default_value='True'),
-    DeclareLaunchArgument(
-      'start_quadruped_controller', default_value='True')
+      'world_file', default_value=os.path.join(
+            get_package_share_directory("champ_gazebo"), 'worlds/industrial_plant.sdf'))
+
   ]
   
   use_simulator = LaunchConfiguration('use_simulator')
@@ -104,14 +111,11 @@ def generate_launch_description():
 
 
   # Start Gazebo
-  ground_plane_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'ground_plane.sdf'])
-  plant_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'industrial_plant.sdf'])
-  marsyard_sdf=PathJoinSubstitution([FindPackageShare('champ_gazebo'), 'worlds', 'marsyard2020.sdf'])
   gz_launch = IncludeLaunchDescription(
             PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py']),
             launch_arguments = [
                ('gz_args', [
-                   plant_sdf,
+                   LaunchConfiguration("world_file"),
                    ' -r',
                    ' -v 4' 
                ])
@@ -122,7 +126,10 @@ def generate_launch_description():
   # Spawn Spot
   spawn_spot = IncludeLaunchDescription(
             PathJoinSubstitution([FindPackageShare('champ_bringup'), 'launch', 'spot_spawn.launch.py']),
-            launch_arguments={'x': LaunchConfiguration("x"), 
+            launch_arguments={'urdf_file': LaunchConfiguration("urdf_file"),
+                      'urdf_mapping': LaunchConfiguration('urdf_mapping'),
+                      'robot_base_link': LaunchConfiguration('robot_base_link'),
+                      'x': LaunchConfiguration("x"), 
                       "y": LaunchConfiguration("y"),
                       "z": LaunchConfiguration("z"),
                       "roll": LaunchConfiguration("roll"),

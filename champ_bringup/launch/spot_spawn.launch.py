@@ -1,7 +1,7 @@
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node, SetParameter
-from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable, OpaqueFunction
 from launch.actions import RegisterEventHandler
 from launch.actions import IncludeLaunchDescription
 from launch.actions import ExecuteProcess
@@ -15,16 +15,39 @@ from launch_ros.substitutions import FindPackageShare
 from os import environ
 import os
 import xacro
+import yaml
 
+def evaluate_nodes(context, *args, **kwargs):
+
+  urdf_path = LaunchConfiguration("urdf_file").perform(context)
+  mapping_dict = LaunchConfiguration("urdf_mapping").perform(context)
+  mapping_yaml = yaml.safe_load(mapping_dict) 
+
+  robot_description = xacro.process_file( 
+     urdf_path, mappings=mapping_yaml).toprettyxml(indent="  ")
+
+  robot_state_publisher_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")},
+                    {'robot_description': robot_description}],
+        remappings=[('/tf', 'tf'),
+                    ('/tf_static', 'tf_static')],
+        output='screen'
+  )
+  
+  return [robot_state_publisher_node]
+
+##################################################################
 def generate_launch_description():
 
-  # Get here directories of packages
-  champ_bringup_share_dir = get_package_share_directory(
-      'champ_bringup')
-  champ_description_share_dir = get_package_share_directory(
-      'champ_description')
-
   launch_args = [
+    DeclareLaunchArgument("urdf_file",
+        default_value=os.path.join( get_package_share_directory('spot_description'), 'urdf/spot.urdf.xacro')),
+    DeclareLaunchArgument("urdf_mapping",
+        default_value="{'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True', 'feet': 'True'}"),
+    DeclareLaunchArgument("robot_base_link", default_value="body"),
     DeclareLaunchArgument(
         'x',
         default_value='5.0',
@@ -58,14 +81,9 @@ def generate_launch_description():
         default_value='',
         description='...'),
     DeclareLaunchArgument(
-        'champ_params',
-        default_value=os.path.join(
-            champ_bringup_share_dir, 'config', 'champ_params.yaml'),
-        description='path to locks params.'),
-    DeclareLaunchArgument(
         'localization_params',
         default_value=os.path.join(
-            champ_bringup_share_dir, 'config', 'robot_localization_params.yaml'),
+            get_package_share_directory('champ_bringup'), 'config', 'robot_localization_params.yaml'),
         description='Path to the vox_nav parameters file.'),
     DeclareLaunchArgument(
       'start_quadruped_controller', default_value='False')
@@ -74,14 +92,12 @@ def generate_launch_description():
   use_simulator = LaunchConfiguration('use_simulator')
   use_sim_time = LaunchConfiguration('use_sim_time', default=True)
   tf_prefix = LaunchConfiguration('tf_prefix')
-  champ_params = LaunchConfiguration('champ_params')  
     
-  # Gazebo setup
-  champ_models_path = get_package_share_directory('champ_gazebo')
+  # Robot publisher
+  nodes_eval = OpaqueFunction(function=evaluate_nodes)
     
   # Bridge
-  bridge_config_file = os.path.join(
-      champ_bringup_share_dir, 'config', "spot_bridge.yaml")
+  bridge_config_file = os.path.join(get_package_share_directory('champ_bringup'), 'config', "spot_bridge.yaml")
 
   bridge = Node(
       package='ros_gz_bridge',
@@ -90,29 +106,6 @@ def generate_launch_description():
       #arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
       output='screen'
   )
-
-  # Robot spawn/publisher
-  #xacro_full_dir = os.path.join(champ_description_share_dir, 'urdf', 'spot/spot.urdf.xacro') #'champ/champ.urdf.xacro'
-  #xacro_mappings = {'simulate_cameras': 'True', 'visualize': 'False'}
-  spot_description_share_dir = get_package_share_directory('spot_description')
-  xacro_full_dir = os.path.join(spot_description_share_dir, 'urdf', 'spot.urdf.xacro')
-  xacro_mappings={'arm': 'True', 'add_ros2_control_tag': 'True', 'hardware_interface_type': 'gazebo', 'simulate_cameras': 'True', 'feet': 'True'}
-
-  robot_description = xacro.process_file( 
-     xacro_full_dir,
-     mappings=xacro_mappings).toprettyxml(indent="  ")
-
-  robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        parameters=[{"use_sim_time": use_sim_time},
-                    {'robot_description': robot_description}],
-        remappings=[('/tf', 'tf'),
-                    ('/tf_static', 'tf_static')],
-        output='screen'
-  )
-
 
   # Spawn the robot in Ignition Gazebo
   spawn_entity_to_gazebo_node = Node(
@@ -138,7 +131,7 @@ def generate_launch_description():
         executable="republish_ground_truth",
         name="republish_ground_truth",
         output="screen",
-        parameters=[{"robot_pose_topic": "/model/spot/pose", "fixed_frame": "world", "robot_frame": "body"}]
+        parameters=[{"robot_pose_topic": "/model/spot/pose", "fixed_frame": "world", "robot_frame": LaunchConfiguration("robot_base_link")}]
   )
   
 
@@ -167,6 +160,15 @@ def generate_launch_description():
         output='screen',
   )
 
+  load_gripper_trajectory_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_trajectory_controller", "-c", "/controller_manager"],
+        name="start_gripper_trajectory_controller",
+        output='screen',
+  )
+
+
   odom_republish_node = Node(
         package='champ_gazebo',
         executable='helper_publish_base_pose',
@@ -183,8 +185,8 @@ def generate_launch_description():
     launch_args + 
     [
       SetParameter(name='use_sim_time', value=True), 
+      nodes_eval,
       bridge,
-      robot_state_publisher_node,
       spawn_entity_to_gazebo_node,
       ground_truth_node,
       RegisterEventHandler(
@@ -196,7 +198,7 @@ def generate_launch_description():
       RegisterEventHandler(
           event_handler=OnProcessExit(
               target_action=load_joint_state_controller,
-              on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller],
+              on_exit=[load_joint_trajectory_controller, load_arm_trajectory_controller, load_gripper_trajectory_controller],
           )
       ),
       RegisterEventHandler(

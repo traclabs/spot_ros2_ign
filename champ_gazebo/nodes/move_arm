@@ -13,15 +13,20 @@ class MoveArm(Node):
     def __init__(self):
         super().__init__('arm_node')
         self.arm_publisher_ = self.create_publisher(JointTrajectory, '/arm_trajectory_controller/joint_trajectory', 10)
+        self.gripper_publisher_ = self.create_publisher(JointTrajectory, '/gripper_trajectory_controller/joint_trajectory', 10)
 
         self.close_srv = self.create_service(Empty, 'close_arm', self.close_arm_callback)
         self.up_srv = self.create_service(Empty, 'up_arm', self.up_arm_callback)
+
+        self.close_gripper_srv = self.create_service(Empty, 'close_gripper', self.close_gripper_callback)
+        self.open_gripper_srv = self.create_service(Empty, 'open_gripper', self.open_gripper_callback)
+
         
     def close_arm_callback(self, request, response):
         traj = JointTrajectory()        
 
         traj = JointTrajectory()        
-        traj.joint_names = ["arm_sh0", "arm_sh1", "arm_el0", "arm_el1", "arm_wr0", "arm_wr1"] #, "arm_f1x"];
+        traj.joint_names = ["arm_sh0", "arm_sh1", "arm_el0", "arm_el1", "arm_wr0", "arm_wr1"]
 
         point1 = JointTrajectoryPoint()
         point1.positions = [-0.2, -0.2, 2.0, -0.2, -1.6, 0.7] #, 0.0]
@@ -36,7 +41,7 @@ class MoveArm(Node):
         traj = JointTrajectory()        
 
         traj = JointTrajectory()        
-        traj.joint_names = ["arm_sh0", "arm_sh1", "arm_el0", "arm_el1", "arm_wr0", "arm_wr1"] #, "arm_f1x"];
+        traj.joint_names = ["arm_sh0", "arm_sh1", "arm_el0", "arm_el1", "arm_wr0", "arm_wr1"] 
 
         point1 = JointTrajectoryPoint()
         point1.positions = [0.0, -1.57, 0.0, -0.2, -1.6, 0.7] #, 0.0]
@@ -44,6 +49,36 @@ class MoveArm(Node):
 
         traj.points.append(point1)
         self.arm_publisher_.publish(traj)
+
+        return response
+
+    def close_gripper_callback(self, request, response):
+        traj = JointTrajectory()        
+
+        traj = JointTrajectory()        
+        traj.joint_names = ["arm_f1x"];
+
+        point1 = JointTrajectoryPoint()
+        point1.positions = [-0.05]
+        point1.time_from_start = Duration(sec=4)
+
+        traj.points.append(point1)
+        self.gripper_publisher_.publish(traj)
+
+        return response
+
+    def open_gripper_callback(self, request, response):
+        traj = JointTrajectory()        
+
+        traj = JointTrajectory()        
+        traj.joint_names = ["arm_f1x"];
+
+        point1 = JointTrajectoryPoint()
+        point1.positions = [-1.50]
+        point1.time_from_start = Duration(sec=4)
+
+        traj.points.append(point1)
+        self.gripper_publisher_.publish(traj)
 
         return response
 
