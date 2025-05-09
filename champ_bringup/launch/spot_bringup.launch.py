@@ -36,7 +36,13 @@ def generate_launch_description():
       'champ_bringup')
   champ_description_share_dir = get_package_share_directory(
       'champ_description')
-
+  
+  # xyz yaw:
+  # 5.0, 0.0 0.84  : In the middle of room with pipes, ladder and a small pile of metallic hubris
+  # 54.0 -11.85 10.70 (10.526) -1.671: Close to equipment piece that looks like a motor?
+  # 35.11 8.819 (10.70) 10.526 3.087: Close to stairs
+  # 46.821, 14.213, (20.7) 20.523 0.0: Between both machines
+  # 79.183 -3.491 (10.7) 10.513 2.9: Close to pipes
   launch_args = [
     DeclareLaunchArgument(
         'x',
