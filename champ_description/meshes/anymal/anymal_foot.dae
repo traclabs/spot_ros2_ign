@@ -89,7 +89,7 @@
               <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="carbon_uv_texture_jpg-sampler"/>
+              <texture texture="carbon_uv_texture_jpg-sampler" texcoord="TEXCOORD"/>
             </diffuse>
             <specular>
               <color sid="specular">0.125 0.125 0.125 1</color>

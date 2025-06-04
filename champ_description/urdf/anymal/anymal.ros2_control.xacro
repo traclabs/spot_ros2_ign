@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="ros2_control_joint"
+        params="joint_name position_min:=0.0 position_max:=0.0 velocity_max effort_max k_q_p k_qd_p">
+        <joint name="${joint_name}">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+
+            <command_interface name="position">
+                <param name="min">${position_min}</param>
+                <param name="max">${position_max}</param>
+            </command_interface>
+            <command_interface name="velocity">
+                <param name="min">${-velocity_max}</param>
+                <param name="max">${velocity_max}</param>
+            </command_interface>
+            <command_interface name="effort">
+                <param name="min">${-effort_max}</param>
+                <param name="max">${effort_max}</param>
+            </command_interface>
+            <command_interface name="k_q_p">
+                <param name="initial_value">${k_q_p}</param>
+            </command_interface>
+            <command_interface name="k_qd_p">
+                <param name="initial_value">${k_qd_p}</param>
+            </command_interface>
+        </joint>
+    </xacro:macro>
+
+    <!-- TODO We do not know the real velocity bounds for Spot. -->
+    <xacro:macro name="leg" params="left_or_right front_or_rear k_q_p_list k_qd_p_list">
+        <!-- it's assumed that k_q_p_list and k_qd_list have 3 elements in them, where index 0 corresponds to hip x, 1 to hip y, and 2 to knee.-->
+        <xacro:ros2_control_joint joint_name="${left_or_right}${front_or_rear}_HAA"
+            position_min="-9.42" position_max="9.42" velocity_max="100" effort_max="45" k_q_p="${k_q_p_list[0]}" k_qd_p="${k_qd_p_list[0]}" />
+
+        <xacro:ros2_control_joint joint_name="${left_or_right}${front_or_rear}_HFE"
+            position_min="-9.42" position_max="9.42" velocity_max="100" effort_max="45" k_q_p="${k_q_p_list[1]}" k_qd_p="${k_qd_p_list[1]}" />
+
+        <xacro:ros2_control_joint joint_name="${left_or_right}${front_or_rear}_KFE"
+            position_min="-9.42" position_max="9.42" velocity_max="100" effort_max="115" k_q_p="${k_q_p_list[2]}" k_qd_p="${k_qd_p_list[2]}" />
+    </xacro:macro>
+
+
+    <xacro:macro name="anymal_ros2_control" params="interface_type k_q_p k_qd_p">
+        <!-- Currently implements a simple system interface that covers all joints of the robot -->
+        <ros2_control name="SpotSystem" type="system">
+            <hardware>
+            <xacro:if value="${interface_type == 'mock'}">
+                <plugin>mock_components/GenericSystem</plugin>
+                <param name="mock_sensor_commands">false</param>
+                <param name="state_following_offset">0.0</param>
+            </xacro:if>
+
+            <xacro:if value="${interface_type == 'gazebo'}">
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </xacro:if>
+            </hardware>
+
+            <!-- parse the sting seperated input value into a list for easier operations. -->
+            <xacro:property name="k_q_p_arg" value="${[float(i) for i in k_q_p.split()]}"/>
+            <xacro:property name="k_qd_p_arg" value="${[float(i) for i in k_qd_p.split()]}"/>
+            <!-- default gain values provided by BD:
+            https://github.com/boston-dynamics/spot-cpp-sdk/blob/master/cpp/examples/joint_control/constants.hpp -->
+            <xacro:property name="k_q_p_default" value="${[624.0, 936.0, 286.0, 624.0, 936.0, 286.0, 624.0, 936.0, 286.0, 624.0, 936.0, 286.0]}"/>
+            <xacro:property name="k_qd_p_default" value="${[5.20, 5.20, 2.04, 5.20, 5.20, 2.04, 5.20, 5.20, 2.04, 5.20, 5.20, 2.04]}"/>
+            <!-- number of expected elements in the gain string -->
+            <xacro:property name="njoints" value="${12}"/>
+            <!-- ensure that the values we are working with have the appropriate number of joints.
+            If the user passed string is correctly formatted, use that, else fall back to the default values. -->
+            <xacro:property name="k_q_p_validated" value="${k_q_p_arg if len(k_q_p_arg) == njoints else k_q_p_default[:njoints]}"/>
+            <xacro:property name="k_qd_p_validated" value="${k_qd_p_arg if len(k_qd_p_arg) == njoints else k_qd_p_default[:njoints]}"/>
+
+            <!-- Add the legs, setting the initial gain values to the appropriate values. -->
+            <xacro:leg front_or_rear="F" left_or_right="L"  k_q_p_list="${k_q_p_validated[:3]}"   k_qd_p_list="${k_qd_p_validated[:3]}"/>
+            <xacro:leg front_or_rear="F" left_or_right="R"  k_q_p_list="${k_q_p_validated[3:6]}"  k_qd_p_list="${k_qd_p_validated[3:6]}"/>
+            <xacro:leg front_or_rear="H"  left_or_right="L" k_q_p_list="${k_q_p_validated[6:9]}"  k_qd_p_list="${k_qd_p_validated[6:9]}"/>
+            <xacro:leg front_or_rear="H"  left_or_right="R" k_q_p_list="${k_q_p_validated[9:12]}" k_qd_p_list="${k_qd_p_validated[9:12]}"/>
+
+            <!--<sensor name="imu_sensor">
+                <state_interface name="orientation.x"/>
+                <state_interface name="orientation.y"/>
+                <state_interface name="orientation.z"/>
+                <state_interface name="orientation.w"/>
+                <state_interface name="angular_velocity.x"/>
+                <state_interface name="angular_velocity.y"/>
+                <state_interface name="angular_velocity.z"/>
+                <state_interface name="linear_acceleration.x"/>
+                <state_interface name="linear_acceleration.y"/>
+                <state_interface name="linear_acceleration.z"/>
+                <param name="frame_id">imu_link</param>
+            </sensor>
+            <sensor name="foot_sensor">
+                <state_interface name="foot_state.front.left"/>
+                <state_interface name="foot_state.front.right"/>
+                <state_interface name="foot_state.back.left"/>
+                <state_interface name="foot_state.back.right"/>
+            </sensor>
+            <sensor name="odom_tform_body">
+                <state_interface name="position.x"/>
+                <state_interface name="position.y"/>
+                <state_interface name="position.z"/>
+                <state_interface name="rotation.x"/>
+                <state_interface name="rotation.y"/>
+                <state_interface name="rotation.z"/>
+                <state_interface name="rotation.w"/>
+            </sensor>
+            <sensor name="vision_tform_body">
+                <state_interface name="position.x"/>
+                <state_interface name="position.y"/>
+                <state_interface name="position.z"/>
+                <state_interface name="rotation.x"/>
+                <state_interface name="rotation.y"/>
+                <state_interface name="rotation.z"/>
+                <state_interface name="rotation.w"/>
+            </sensor>-->
+        </ros2_control>
+        
+        <!-- Gazebo ROS Control plugin -->
+        <xacro:if value="${interface_type == 'gazebo'}">
+          <gazebo>
+            <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="gz_ros2_control-system">
+              <parameters>$(find champ_bringup)/config/ros2_control_anymal.yaml</parameters>
+          </plugin>
+          </gazebo>
+        </xacro:if>
+        
+    </xacro:macro>
+
+</robot>

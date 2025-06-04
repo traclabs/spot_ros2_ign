@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- =================================================================================== -->
+<!--   Copyright 2019 ANYbotics, https://www.anybotics.com                               -->
+<!-- =================================================================================== -->
+<!-- This file contains the description of the ANYmal B robot. -->
+<robot name="anymal" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find champ_description)/urdf/anymal/anymal_macro.xacro" />
+  <xacro:include filename="$(find champ_description)/urdf/anymal/anymal.ros2_control.xacro" />  
+  <xacro:include filename="$(find champ_description)/urdf/anymal/anymal.sensors.gazebo.xacro" /> 
+
+  <!-- Parameters for ROS 2 control -->
+  <xacro:arg name="add_ros2_control_tag" default="true" />
+  <xacro:arg name="hardware_interface_type" default="gazebo" />
+  <xacro:arg name="k_q_p" default="" />
+  <xacro:arg name="k_qd_p" default="" />
+     
+  <!-- Load Anymal -->
+  <xacro:load_anymal  />     
+     
+  <!-- Adding the ROS 2 control tags -->
+  <xacro:if value="$(arg add_ros2_control_tag)">
+      <xacro:anymal_ros2_control interface_type="$(arg hardware_interface_type)" 
+                               k_q_p="$(arg k_q_p)"
+                               k_qd_p="$(arg k_qd_p)" />
+  </xacro:if>     
+        
+        
+  <!-- Gazebo plugins: pose publisher -->
+  <xacro:anymal_pose_publisher />      
+        
+</robot>

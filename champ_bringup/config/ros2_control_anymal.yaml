@@ -1,0 +1,58 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000
+    use_sim_time: true
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_state_broadcaster:
+  ros__parameters:
+    publish_rate: 100.0
+
+joint_trajectory_controller:   
+  ros__parameters:
+    state_publish_rate: 100.0 # Defaults to 50
+    action_monitor_rate: 100.0 # Defaults to 20
+    joints:
+        - LF_HAA
+        - LF_HFE
+        - LF_KFE
+        - RF_HAA
+        - RF_HFE
+        - RF_KFE
+        - LH_HAA
+        - LH_HFE
+        - LH_KFE
+        - RH_HAA
+        - RH_HFE
+        - RH_KFE        
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
+    allow_partial_joints_goal: false # Defaults to false
+    open_loop_control: true
+    allow_integration_in_goal_trajectories: false
+    constraints:
+      stopped_velocity_tolerance: 0.1 # Defaults to 0.01
+      goal_time: 0.1 # Defaults to 0.0 (start immediately)   
+    gains:  
+        LF_HAA  : {p: 250.0, i: 0.2, d: 5.0}
+        LF_HFE  : {p: 250.0, i: 0.2, d: 5.0}
+        LF_KFE   : {p: 250.0, i: 0.2, d: 5.0}
+        RF_HAA : {p: 250.0, i: 0.2, d: 5.0}
+        RF_HFE : {p: 250.0, i: 0.2, d: 5.0}
+        RF_KFE  : {p: 250.0, i: 0.2, d: 5.0}
+        LH_HAA   : {p: 250.0, i: 0.2, d: 5.0}
+        LH_HFE   : {p: 250.0, i: 0.2, d: 5.0}
+        LF_KFE    : {p: 250.0, i: 0.2, d: 5.0}
+        RH_HAA  : {p: 250.0, i: 0.2, d: 5.0}
+        RH_HFE  : {p: 250.0, i: 0.2, d: 5.0}
+        RH_KFE   : {p: 250.0, i: 0.2, d: 5.0}
+#   {p: 250.0, i: 0.2, d: 5.0} --> previously
