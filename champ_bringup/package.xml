@@ -15,6 +15,7 @@
   <depend>std_msgs</depend>
   <depend>twist_mux</depend>
   <depend>champ_description</depend>
+  <depend>champ_base</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

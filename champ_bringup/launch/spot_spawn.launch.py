@@ -21,9 +21,9 @@ def evaluate_nodes(context, *args, **kwargs):
 
   urdf_path = LaunchConfiguration("urdf_file").perform(context)
   mapping_dict = LaunchConfiguration("urdf_mapping").perform(context)
-  mapping_yaml = yaml.safe_load(mapping_dict) 
+  mapping_yaml = yaml.safe_load(mapping_dict)
 
-  robot_description = xacro.process_file( 
+  robot_description = xacro.process_file(
      urdf_path, mappings=mapping_yaml).toprettyxml(indent="  ")
 
   robot_state_publisher_node = Node(
@@ -36,7 +36,7 @@ def evaluate_nodes(context, *args, **kwargs):
                     ('/tf_static', 'tf_static')],
         output='screen'
   )
-  
+
   return [robot_state_publisher_node]
 
 ##################################################################
@@ -55,19 +55,19 @@ def generate_launch_description():
     DeclareLaunchArgument(
         'y',
         default_value='0.0',
-        description='y at which to spawn Spot.'), 
+        description='y at which to spawn Spot.'),
     DeclareLaunchArgument(
         'z',
         default_value='0.84',
-        description='Height at which to spawn Spot.'), 
+        description='Height at which to spawn Spot.'),
     DeclareLaunchArgument(
         'roll',
         default_value='0.0',
-        description='Roll at which to spawn Spot.'),  
+        description='Roll at which to spawn Spot.'),
     DeclareLaunchArgument(
         'yaw',
         default_value='-0.5',
-        description='Yaw at which to spawn Spot.'),          
+        description='Yaw at which to spawn Spot.'),
     DeclareLaunchArgument(
         'use_simulator',
         default_value='True',
@@ -86,16 +86,16 @@ def generate_launch_description():
             get_package_share_directory('champ_bringup'), 'config', 'robot_localization_params.yaml'),
         description='Path to the vox_nav parameters file.'),
     DeclareLaunchArgument(
-      'start_quadruped_controller', default_value='False')
+        'start_quadruped_controller', default_value='False')
   ]
-  
+
   use_simulator = LaunchConfiguration('use_simulator')
   use_sim_time = LaunchConfiguration('use_sim_time', default=True)
   tf_prefix = LaunchConfiguration('tf_prefix')
-    
+
   # Robot publisher
   nodes_eval = OpaqueFunction(function=evaluate_nodes)
-    
+
   # Bridge
   bridge_config_file = os.path.join(get_package_share_directory('champ_bringup'), 'config', "spot_bridge.yaml")
 
@@ -114,16 +114,16 @@ def generate_launch_description():
         arguments=['-name', 'spot',
                    '-topic', '/robot_description',
                     "-x", LaunchConfiguration("x"),
-                    "-y", LaunchConfiguration("y"),                     
+                    "-y", LaunchConfiguration("y"),
                    "-z", LaunchConfiguration("z"),
                    "-R", LaunchConfiguration("roll"),
                    "-Y", LaunchConfiguration("yaw"),
                   ],
         parameters=[{"use_sim_time": use_sim_time}],
         output='screen',
-        condition=IfCondition(use_simulator)        
+        condition=IfCondition(use_simulator)
   )
-  
+
   # Fix up the robot's ground truth to publish w.r.t. world
   # by default it is published w.r.t. the world's name, rather than "world"
   ground_truth_node = Node(
@@ -133,7 +133,7 @@ def generate_launch_description():
         output="screen",
         parameters=[{"robot_pose_topic": "/model/spot/pose", "fixed_frame": "world", "robot_frame": LaunchConfiguration("robot_base_link")}]
   )
-  
+
 
   load_joint_state_controller = Node(
         package="controller_manager",
@@ -177,14 +177,13 @@ def generate_launch_description():
 
   # Start quadruped controller
   launch_quadruped_controller = IncludeLaunchDescription(
-            PathJoinSubstitution([FindPackageShare('champ_bringup'), 'launch', 'spot_quadruped_controller.launch.py']),
-            condition=IfCondition(LaunchConfiguration("start_quadruped_controller"))
+        PathJoinSubstitution([FindPackageShare('champ_bringup'), 'launch', 'spot_quadruped_controller.launch.py'])
   )
-    
+
   return LaunchDescription(
-    launch_args + 
+    launch_args +
     [
-      SetParameter(name='use_sim_time', value=True), 
+      SetParameter(name='use_sim_time', value=True),
       nodes_eval,
       bridge,
       spawn_entity_to_gazebo_node,
@@ -205,7 +204,8 @@ def generate_launch_description():
           event_handler=OnProcessExit(
               target_action=load_joint_trajectory_controller,
               on_exit=[launch_quadruped_controller],
-          )
+          ),
+          condition=IfCondition(LaunchConfiguration("start_quadruped_controller"))
       ),
       odom_republish_node
     ])
