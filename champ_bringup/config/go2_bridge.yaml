@@ -1,0 +1,15 @@
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock" 
+#  lazy: true # default: false :o
+  direction: GZ_TO_ROS
+
+
+- ros_topic_name: "/model/go2/pose"
+  gz_topic_name: "/model/go2/pose"
+  ros_type_name: geometry_msgs/msg/TransformStamped # geometry_msgs/msg/TransformStamped "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose" 
+#  lazy: true
+  direction: GZ_TO_ROS
+  

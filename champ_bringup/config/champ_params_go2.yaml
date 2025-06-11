@@ -1,0 +1,31 @@
+/**:
+  ros__parameters:
+    gait:
+      knee_orientation: ">>"
+      pantograph_leg: false
+      odom_scaler: 0.9
+      max_linear_velocity_x: 0.20 #0.50
+      max_linear_velocity_y: 0.25
+      max_angular_velocity_z: 1.0
+      com_x_translation: 0.0
+      swing_height: 0.03 #0.04
+      stance_depth: 0.002 #0.00 
+      stance_duration: 0.25
+      nominal_height: 0.35 #0.2
+    loop_rate: 50.0
+    use_sim_time: true
+    #added by diya 9/4
+    # odom_frame: odom
+    # base_link_frame: base
+    base: base
+    # LINKS for GO2
+    left_front_links: ["FL_hip", "FL_thigh", "FL_calf", "FL_foot"]
+    left_hind_links: ["RL_hip", "RL_thigh", "RL_calf", "RL_foot"]
+    right_front_links: ["FR_hip", "FR_thigh", "FR_calf", "FR_foot"]
+    right_hind_links: ["RR_hip", "RR_thigh", "RR_calf", "RR_foot"]
+    # JOINTS for GO2
+    left_front_joints: ["FL_hip_joint", "FL_thigh_joint", "FL_calf_joint"]
+    left_hind_joints: ["RL_hip_joint", "RL_thigh_joint", "RL_calf_joint"]
+    right_front_joints: ["FR_hip_joint", "FR_thigh_joint", "FR_calf_joint"]
+    right_hind_joints: ["RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"]
+
