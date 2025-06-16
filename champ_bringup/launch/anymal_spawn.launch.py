@@ -139,7 +139,7 @@ def generate_launch_description():
   load_joint_state_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
+        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager", "--switch-timeout", "100.0"],
         name="start_joint_state_broadcaster",
         output='screen'
   )
@@ -148,7 +148,7 @@ def generate_launch_description():
   load_joint_trajectory_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_trajectory_controller", "-c", "/controller_manager"],
+        arguments=["joint_trajectory_controller", "-c", "/controller_manager", "--switch-timeout", "100.0"],
         name="start_joint_trajectory_controller",
         output='screen',
   )
@@ -156,7 +156,7 @@ def generate_launch_description():
   load_arm_trajectory_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["arm_trajectory_controller", "-c", "/controller_manager"],
+        arguments=["arm_trajectory_controller", "-c", "/controller_manager", "--switch-timeout", "100.0"],
         name="start_arm_trajectory_controller",
         output='screen',
   )
@@ -164,7 +164,7 @@ def generate_launch_description():
   load_gripper_trajectory_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["gripper_trajectory_controller", "-c", "/controller_manager"],
+        arguments=["gripper_trajectory_controller", "-c", "/controller_manager", "--switch-timeout", "100.0"],
         name="start_gripper_trajectory_controller",
         output='screen',
   )
