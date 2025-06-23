@@ -19,7 +19,7 @@
   <depend>nav_msgs</depend>
   <depend>champ</depend>
   <depend>champ_msgs</depend>
-  <depend>tf</depend>
+  <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>urdf</depend>
   <depend>message_filters</depend>
