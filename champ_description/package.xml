@@ -11,7 +11,7 @@
   <maintainer email="fetullah.atas@nmbu.no">Fetullah Atas</maintainer>
   <url type="repository">https://github.com/jediofgever/quadruped_ros2</url>
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <depend>ign</depend>
+  <!-- <depend>ign</depend> -->
   <export>
     <build_type>ament_cmake</build_type>
   </export>
