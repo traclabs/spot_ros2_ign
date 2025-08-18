@@ -13,3 +13,16 @@
 #  lazy: true
   direction: GZ_TO_ROS
   
+- ros_topic_name: "/pc_d435"
+  gz_topic_name: "/world/urban_circuit_02/model/go2/link/base_link/sensor/rs_d435/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked" 
+#  lazy: true
+  direction: GZ_TO_ROS   
+  
+- ros_topic_name: "/pc_d435_image"
+  gz_topic_name: "/world/urban_circuit_02/model/go2/link/base_link/sensor/rs_d435/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image" 
+#  lazy: true
+  direction: GZ_TO_ROS     
