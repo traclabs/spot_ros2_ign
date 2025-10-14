@@ -9,7 +9,7 @@
       max_angular_velocity_z: 1.0
       com_x_translation: 0.0
       swing_height: 0.03 #0.04
-      stance_depth: 0.002 #0.00 
+      stance_depth: 0.002 #0.00
       stance_duration: 0.25
       nominal_height: 0.35 #0.2
     loop_rate: 50.0
@@ -19,13 +19,13 @@
     # base_link_frame: base
     base: base
     # LINKS for GO2
-    left_front_links: ["FL_hip", "FL_thigh", "FL_calf", "FL_foot"]
-    left_hind_links: ["RL_hip", "RL_thigh", "RL_calf", "RL_foot"]
-    right_front_links: ["FR_hip", "FR_thigh", "FR_calf", "FR_foot"]
+    left_front_links: ["LF_hip", "LF_thigh", "LF_calf", "LF_foot"]
+    left_hind_links: ["LR_hip", "LR_thigh", "LR_calf", "LR_foot"]
+    right_front_links: ["RF_hip", "RF_thigh", "RF_calf", "RF_foot"]
     right_hind_links: ["RR_hip", "RR_thigh", "RR_calf", "RR_foot"]
     # JOINTS for GO2
-    left_front_joints: ["FL_hip_joint", "FL_thigh_joint", "FL_calf_joint"]
-    left_hind_joints: ["RL_hip_joint", "RL_thigh_joint", "RL_calf_joint"]
-    right_front_joints: ["FR_hip_joint", "FR_thigh_joint", "FR_calf_joint"]
-    right_hind_joints: ["RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"]
+    left_front_joints: ["LF_hip_joint", "LF_upper_leg_joint", "LF_lower_leg_joint"]
+    left_hind_joints: ["LR_hip_joint", "LR_upper_leg_joint", "LR_lower_leg_joint"]
+    right_front_joints: ["RF_hip_joint", "RF_upper_leg_joint", "RF_lower_leg_joint"]
+    right_hind_joints: ["RR_hip_joint", "RR_upper_leg_joint", "RR_lower_leg_joint"]
 
