@@ -44,6 +44,20 @@
 - ros_topic_name: "/model/spot/pose"
   gz_topic_name: "/model/spot/pose"
   ros_type_name: geometry_msgs/msg/TransformStamped # geometry_msgs/msg/TransformStamped "geometry_msgs/msg/Pose"
-  gz_type_name: "gz.msgs.Pose" 
+  gz_type_name: "gz.msgs.Pose"
+#  lazy: true
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/arm_camera/image"
+  gz_topic_name: "/arm_camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+#  lazy: true
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/arm_camera/camera_info"
+  gz_topic_name: "/arm_camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
 #  lazy: true
   direction: GZ_TO_ROS
