@@ -34,28 +34,24 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
-set(dependencies
-  rclcpp
-  tf2
-  tf2_ros
-  geometry_msgs
-  nav_msgs
-  sensor_msgs
-  trajectory_msgs
-  visualization_msgs
-  champ_msgs
-  champ
-  urdf
-  tf2_geometry_msgs)
-
-add_executable(message_relay src/message_relay.cpp)
-ament_target_dependencies(message_relay ${dependencies})
-
-add_executable(quadruped_controller src/quadruped_controller.cpp)
-ament_target_dependencies(quadruped_controller ${dependencies})
-
-add_executable(state_estimation src/state_estimation.cpp)
-ament_target_dependencies(state_estimation ${dependencies})
+foreach(target message_relay quadruped_controller state_estimation)
+  add_executable(${target} src/${target}.cpp)
+  target_link_libraries(${target} PUBLIC
+    ${champ_msgs_TARGETS}
+    ${geometry_msgs_TARGETS}
+    ${nav_msgs_TARGETS}
+    ${sensor_msgs_TARGETS}
+    ${trajectory_msgs_TARGETS}
+    ${visualization_msgs_TARGETS}
+    rclcpp::rclcpp
+    sensor_msgs::sensor_msgs_library
+    tf2::tf2
+    tf2_geometry_msgs::tf2_geometry_msgs
+    tf2_ros::static_transform_broadcaster_node
+    tf2_ros::tf2_ros
+    urdf::urdf
+  )
+endforeach()
 
 install(TARGETS 
   ARCHIVE DESTINATION lib
