@@ -27,6 +27,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <state_estimation.hpp>
 
+// Older distros: message_filters::Subscriber takes rmw_qos_profile_t. Newer distros: rclcpp::QoS.
+#if defined(ROS_DISTRO_HUMBLE) || defined(ROS_DISTRO_JAZZY) || defined(ROS_DISTRO_KILTED)
+#define MESSAGE_FILTERS_SENSOR_QOS rmw_qos_profile_sensor_data
+#else
+#define MESSAGE_FILTERS_SENSOR_QOS rclcpp::SensorDataQoS()
+#endif
+
 champ::Odometry::Time rosTimeToChampTime(const rclcpp::Time & time)
 {
   return time.nanoseconds() / 1000ul;
@@ -38,8 +45,8 @@ StateEstimation::StateEstimation()
   odometry_(base_, rosTimeToChampTime(this->now()))
 {
 
-  joint_states_subscriber_.subscribe(this, "joint_states", rclcpp::SensorDataQoS());
-  foot_contacts_subscriber_.subscribe(this, "foot_contacts", rclcpp::SensorDataQoS());
+  joint_states_subscriber_.subscribe(this, "joint_states", MESSAGE_FILTERS_SENSOR_QOS);
+  foot_contacts_subscriber_.subscribe(this, "foot_contacts", MESSAGE_FILTERS_SENSOR_QOS);
 
   sync.reset(
     new Sync(

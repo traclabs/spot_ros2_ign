@@ -5,6 +5,10 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
 
+# Expose the distro to the sources (e.g. ROS_DISTRO_JAZZY) for API differences between distros
+string(TOUPPER "$ENV{ROS_DISTRO}" ros_distro_upper)
+add_compile_definitions("ROS_DISTRO_${ros_distro_upper}=1")
+
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
