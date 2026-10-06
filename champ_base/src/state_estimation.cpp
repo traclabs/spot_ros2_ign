@@ -38,8 +38,8 @@ StateEstimation::StateEstimation()
   odometry_(base_, rosTimeToChampTime(this->now()))
 {
 
-  joint_states_subscriber_.subscribe(this, "joint_states", rmw_qos_profile_sensor_data);
-  foot_contacts_subscriber_.subscribe(this, "foot_contacts", rmw_qos_profile_sensor_data);
+  joint_states_subscriber_.subscribe(this, "joint_states", rclcpp::SensorDataQoS());
+  foot_contacts_subscriber_.subscribe(this, "foot_contacts", rclcpp::SensorDataQoS());
 
   sync.reset(
     new Sync(
