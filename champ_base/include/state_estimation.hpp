@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <champ/odometry/odometry.h>
 //#include <champ/utils/urdf_loader.h>
 
-#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Quaternion.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 
@@ -42,14 +42,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include <tf2_ros/buffer.h>
-#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2_ros/transform_broadcaster.hpp>
+#include <tf2_ros/static_transform_broadcaster.hpp>
+#include <tf2_ros/buffer.hpp>
+#include <tf2/LinearMath/Matrix3x3.hpp>
 
-#include <message_filters/subscriber.h>
-#include <message_filters/synchronizer.h>
-#include <message_filters/sync_policies/approximate_time.h>
+#include <message_filters/subscriber.hpp>
+#include <message_filters/synchronizer.hpp>
+#include <message_filters/sync_policies/approximate_time.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <champ_msgs/msg/imu.hpp>
 #include <champ/quadruped_base/quadruped_components.h>

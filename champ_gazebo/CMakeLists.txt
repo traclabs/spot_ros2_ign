@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(champ_gazebo)
 
 if(NOT CMAKE_CXX_STANDARD)
@@ -21,21 +21,15 @@ include_directories(
   include
   ${GAZEBO_INCLUDE_DIRS}) 
 
-set(dependencies
-  rclcpp
-  rclpy
-  std_msgs
-  std_srvs
-  tf2_ros
-  geometry_msgs
-#  gazebo
-#  gazebo_dev
-#  gazebo_msgs
-#  gazebo_ros
-)
-
 add_executable(helper_publish_base_pose src/helper_publish_base_pose.cpp)
-ament_target_dependencies(helper_publish_base_pose ${dependencies})
+target_link_libraries(helper_publish_base_pose PUBLIC
+  ${geometry_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${std_srvs_TARGETS}
+  rclcpp::rclcpp
+  tf2_ros::static_transform_broadcaster_node
+  tf2_ros::tf2_ros
+)
 
 ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/${PROJECT_NAME}.dsv.in")
 
